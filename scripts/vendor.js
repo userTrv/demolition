@@ -8,7 +8,7 @@ const files = {
   'node_modules/three/build/three.module.js': 'three.module.js',
   'node_modules/three/build/three.core.js': 'three.core.js',
   'node_modules/three/examples/jsm/controls/OrbitControls.js': 'OrbitControls.js',
-  'node_modules/@dimforge/rapier3d-compat/dist/rapier.mjs': 'rapier.mjs',
+  'node_modules/@dimforge/rapier3d-compat/dist/rapier.mjs': 'rapier.js', // .js: любой сервер отдаст его как JavaScript
 };
 
 await mkdir(`${root}public/vendor`, { recursive: true });
