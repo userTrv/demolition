@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Иконка Demolition: красный заряд с фитилём на жёлтом фоне -->
+  <rect width="64" height="64" rx="14" fill="#f2c230"/>
+  <rect x="16" y="24" width="32" height="26" rx="5" fill="#e0492f"/>
+  <rect x="16" y="31" width="32" height="4" fill="#9c2c19"/>
+  <rect x="16" y="40" width="32" height="4" fill="#9c2c19"/>
+  <path d="M32 24 C32 16 40 16 42 10" stroke="#1d1f24" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="43" cy="9" r="4" fill="#fff4c2"/>
+</svg>

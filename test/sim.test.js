@@ -36,18 +36,33 @@ test('одна колонна не роняет пятиэтажку', () => {
   assert.equal(r.stars, 0);
 });
 
-test('гараж: подрыв первого этажа — снос с тремя звёздами', () => {
-  const r = play('garage', groundColumns);
-  assert.equal(r.standingPct, 0);
-  assert.equal(r.stars, 3, JSON.stringify(r));
-});
+// Известное решение каждого уровня укладывается в лимит зарядов и даёт три звезды
+const SOLUTIONS = {
+  garage: ['c0.0.0', 'c0.1.0', 'c0.2.0', 'c0.0.1', 'c0.1.1', 'c0.2.1'],
+  khrushchyovka: ['c0.0.1', 'c0.1.1', 'c0.2.1', 'c0.3.1'],
+  tower: ['c0.0.0', 'c0.0.1'],
+};
+
+for (const level of LEVELS) {
+  test(`${level.name}: решение в пределах ${level.charges} зарядов даёт три звезды`, () => {
+    const ids = SOLUTIONS[level.id].map((k) => `${level.id}:${k}`);
+    assert.ok(ids.length <= level.charges);
+    const r = play(level.id, (b) => ids.includes(b.id));
+    assert.equal(r.stars, 3, JSON.stringify(r));
+  });
+}
 
 test('пятиэтажка складывается внутрь себя и не задевает соседей', () => {
   const r = play('khrushchyovka', groundColumns);
   assert.equal(r.standingPct, 0);
   assert.ok(r.maxY < 6, `куча высотой ${r.maxY}`);
   assert.deepEqual(r.hit, []);
-  assert.ok(r.stars >= 2, JSON.stringify(r));
+});
+
+test('пятиэтажка: подрыв половины оставляет вторую половину стоять', () => {
+  const r = play('khrushchyovka', (b) => groundColumns(b) && b.pos[0] < 0);
+  assert.ok(r.standingPct > 0.2, `стоит ${r.standingPct}`);
+  assert.equal(r.stars, 0);
 });
 
 test('башня падает туда, где убраны опоры', () => {
@@ -55,9 +70,11 @@ test('башня падает туда, где убраны опоры', () => {
   assert.equal(left.standingPct, 0);
   assert.ok(left.maxY < 4, `остаток высотой ${left.maxY}`);
   assert.deepEqual(left.hit, [], 'справа офис, его задевать нельзя');
-  assert.ok(left.stars >= 2, JSON.stringify(left));
 
   const right = play('tower', (b) => groundColumns(b) && b.pos[0] > 0);
   assert.ok(right.hit.includes('office'), 'вправо башня ложится на офис');
   assert.ok(right.stars <= 1);
+
+  const back = play('tower', (b) => groundColumns(b) && b.pos[2] > 0);
+  assert.ok(back.hit.includes('shop'), 'назад башня ложится на магазин');
 });

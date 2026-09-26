@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Demolition — подрывник</title>
+  <meta name="description" content="Браузерная игра: расставь заряды, подорви здание и уложи его в зону сноса, не задев соседей.">
+  <meta name="theme-color" content="#1d1f24">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/" } }
+  </script>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <div id="loading" class="screen">
+    <div class="logo">DEMO<span>LITION</span></div>
+    <p>Загрузка физики…</p>
+  </div>
+
+  <div id="menu" class="screen hidden">
+    <div class="logo">DEMO<span>LITION</span></div>
+    <p class="tagline">Расставь заряды, подорви здание и уложи его в зону сноса. Соседей не задевать.</p>
+    <div id="levels" class="levels"></div>
+    <p class="small mouse-only">ЛКМ — заряд, правая кнопка или колесо — камера, пробел — взрыв</p>
+    <p class="small touch-only">Тап по колонне — заряд, два пальца — камера</p>
+  </div>
+
+  <div id="hud" class="hidden">
+    <div class="top">
+      <button id="btn-menu" class="icon" title="Уровни (Esc)">☰</button>
+      <div class="title">
+        <div id="level-name"></div>
+        <div id="hint" class="hint"></div>
+      </div>
+      <button id="btn-sound" class="icon" title="Звук">🔊</button>
+    </div>
+    <div class="bottom">
+      <div class="panel">
+        <div class="charges"><span id="charges-left"></span></div>
+        <div class="delays" id="delays">
+          <span class="label">Задержка</span>
+          <button data-delay="0">0</button>
+          <button data-delay="0.25">0,25</button>
+          <button data-delay="0.5">0,5</button>
+          <button data-delay="1">1 с</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="btn-reset" class="ghost">Сброс</button>
+        <button id="btn-fire" class="fire">Взорвать</button>
+      </div>
+    </div>
+    <div id="countdown" class="countdown hidden"></div>
+  </div>
+
+  <div id="result" class="screen dim hidden">
+    <div class="card">
+      <div id="stars" class="stars"></div>
+      <h2 id="result-title"></h2>
+      <ul id="result-stats" class="stats"></ul>
+      <div class="actions">
+        <button id="btn-retry" class="ghost">Переставить заряды</button>
+        <button id="btn-next" class="fire">Дальше</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
