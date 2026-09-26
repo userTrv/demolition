@@ -13,6 +13,8 @@ const DENSITY = 2400; // бетон, кг/м³
 const SHATTER_DV = 5; // м/с за шаг: такой удар раскалывает кусок и сминает колонну или стену
 const CRUSH_G = 25; // неподвижную колонну сминает удар сильнее N её весов
 const WALL_CRUSH_G = 1.5; // стены хрупкие: под упавшей на них нагрузкой рассыпаются
+const CRUSH_BAND = 3; // м: при ударе куска сминается пояс высотой в этаж над его нижней точкой
+const SPLIT_GRACE = 0.4; // с после разлома куска, пока обломки не сминаются
 const IMPACT_SPEED = 2.5; // м/с, медленнее — это нагрузка, а не удар
 const BEND_MIN = (30 * Math.PI) / 180; // падающий кусок ломается на блоки на наклоне 30–50°
 const BEND_SPREAD = (20 * Math.PI) / 180;
@@ -179,18 +181,21 @@ function detach(sim, r) {
   else sim.world.removeRigidBody(r.body);
 }
 
-// Раскалывает кусок на отдельные блоки, сохраняя их движение. crush — колонны и стены при этом сминаются.
+// Раскалывает кусок на отдельные блоки, сохраняя их движение.
+// crush — удар: колонны и стены нижнего пояса куска (там, где он ударился) сминаются.
 function splitChunk(sim, chunk, crush) {
   const { body } = chunk;
   const com = body.translation();
   const v = body.linvel();
   const w = body.angvel();
+  let minY = Infinity;
+  if (crush) for (const r of chunk.recs) minY = Math.min(minY, r.collider.translation().y);
   for (const r of chunk.recs) {
     const p = r.collider.translation();
     const q = r.collider.rotation();
     sim.byCollider.delete(r.collider.handle);
     r.chunk = null;
-    if (crush && r.block.kind !== 'slab') {
+    if (crush && r.block.kind !== 'slab' && p.y - minY < CRUSH_BAND) {
       r.body = null;
       markDestroyed(sim, r, p, q, 'shatter');
       continue;
@@ -207,6 +212,8 @@ function splitChunk(sim, chunk, crush) {
     r.collider = sim.world.createCollider(colliderDesc(r.block), own);
     sim.byCollider.set(r.collider.handle, r);
     r.body = own;
+    // соседние обломки в первые мгновения толкаются друг о друга, это не удар
+    r.graceUntil = sim.t + SPLIT_GRACE;
   }
   sim.chunks.delete(chunk);
   sim.world.removeRigidBody(body);
@@ -308,7 +315,7 @@ export function step(sim) {
       const dv = delta(m.body.linvel(), m.v);
       if (dv > SHATTER_DV) splitChunk(sim, m, true);
       else if (tilt(m.body) > m.bend) splitChunk(sim, m, false);
-    } else if (m.state === 'dynamic' && !m.chunk && m.block.kind !== 'slab') {
+    } else if (m.state === 'dynamic' && !m.chunk && m.block.kind !== 'slab' && !(sim.t < m.graceUntil)) {
       if (delta(m.body.linvel(), m.v) > SHATTER_DV) destroy(sim, m, 'shatter');
     }
   }

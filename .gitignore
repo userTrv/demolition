@@ -1,5 +1,4 @@
 node_modules/
-certs/
+dist/
 .env
 .DS_Store
-recordings/
