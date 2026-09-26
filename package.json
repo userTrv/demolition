@@ -7,6 +7,14 @@
   "engines": {
     "node": ">=20"
   },
+  "packageManager": "npm@11.19.1",
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": ">=11.19.1 <12",
+      "onFail": "error"
+    }
+  },
   "scripts": {
     "dev": "node scripts/serve.js",
     "test": "node --test"

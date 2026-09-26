@@ -3,3 +3,7 @@ certs/
 .env
 .DS_Store
 recordings/
+.env.*
+!.env.example
+*.pem
+*.key
