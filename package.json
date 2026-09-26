@@ -9,6 +9,11 @@
   },
   "scripts": {
     "dev": "node scripts/serve.js",
-    "test": "node --test"
+    "test": "node --test",
+    "vendor": "node scripts/vendor.js"
+  },
+  "devDependencies": {
+    "@dimforge/rapier3d-compat": "^0.21.0",
+    "three": "^0.186.1"
   }
 }
